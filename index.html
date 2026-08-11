@@ -9,10 +9,10 @@
     :root {
       --bg: #0d1117;
       --panel: #151b23;
-      --panel-2: #171d25;
+      --panel2: #171d25;
       --line: #293548;
       --text: #c8d0da;
-      --muted: #8894a2;
+      --muted: #8995a3;
       --green: #49c95f;
       --blue: #5ca9ff;
       --purple: #bb8cff;
@@ -24,14 +24,94 @@
 
     body {
       margin: 0;
-      font-family: Inter, Arial, sans-serif;
+      min-height: 100vh;
       background: var(--bg);
       color: var(--text);
+      font-family: Inter, Arial, sans-serif;
+    }
+
+    button, input, textarea, select {
+      font: inherit;
+    }
+
+    .hidden { display: none !important; }
+
+    .center-screen {
+      display: grid;
+      min-height: 100vh;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .auth-card {
+      width: min(420px, 100%);
+      padding: 30px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+    }
+
+    .auth-card h1 {
+      margin: 0;
+      color: #edf3f8;
+      font-size: 29px;
+    }
+
+    .auth-card h1 span { color: var(--green); }
+
+    .auth-card p {
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .field,
+    .modal input,
+    .modal textarea,
+    .modal select {
+      width: 100%;
+      margin: 7px 0;
+      padding: 12px;
+      border: 1px solid #354257;
+      border-radius: 7px;
+      outline: none;
+      color: #e0e7ee;
+      background: #0d1117;
+    }
+
+    .primary-btn {
+      width: 100%;
+      margin-top: 8px;
+      padding: 12px;
+      border: 0;
+      border-radius: 7px;
+      color: #092212;
+      background: var(--green);
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .secondary-btn {
+      width: 100%;
+      margin-top: 8px;
+      padding: 11px;
+      border: 1px solid #354257;
+      border-radius: 7px;
+      color: #cbd5df;
+      background: #182130;
+      cursor: pointer;
+    }
+
+    .message {
+      min-height: 20px;
+      margin-top: 15px;
+      color: #f7c66c;
+      font-size: 13px;
+      line-height: 1.4;
     }
 
     .app {
-      min-height: 100vh;
       display: flex;
+      min-height: 100vh;
     }
 
     aside {
@@ -51,6 +131,7 @@
     }
 
     .logo span { color: var(--green); }
+
     .logo small {
       color: #96a1ad;
       font-size: 12px;
@@ -68,10 +149,10 @@
       border: 0;
       border-radius: 6px;
       padding: 12px;
-      text-align: left;
-      font-size: 14px;
       color: #aeb9c4;
       background: transparent;
+      text-align: left;
+      font-size: 14px;
       cursor: pointer;
     }
 
@@ -84,7 +165,6 @@
 
     .month {
       display: flex !important;
-      align-items: center;
       justify-content: space-between;
       padding: 7px 12px !important;
       font-size: 11px !important;
@@ -106,10 +186,10 @@
     }
 
     header {
-      height: 87px;
       display: flex;
       align-items: center;
       gap: 8px;
+      height: 87px;
       margin: 0 -28px 31px;
       padding: 0 28px;
       border-top: 2px solid #826515;
@@ -127,15 +207,18 @@
 
     .user,
     .header-btn,
-    .nav-month {
-      border: 1px solid #2d3a50;
-      background: #182130;
-      color: #c9d2dc;
-      border-radius: 7px;
+    .heading button {
       padding: 9px 13px;
+      border: 1px solid #2d3a50;
+      border-radius: 7px;
+      color: #c9d2dc;
+      background: #182130;
     }
 
     .user { border-radius: 20px; }
+
+    .header-btn,
+    .heading button { cursor: pointer; }
 
     .stats {
       display: grid;
@@ -184,16 +267,6 @@
       font-size: 24px;
     }
 
-    .heading button {
-      margin-left: 6px;
-      padding: 9px 13px;
-      color: #cbd5df;
-      background: #182130;
-      border: 1px solid #2d3a50;
-      border-radius: 7px;
-      cursor: pointer;
-    }
-
     .week,
     .calendar {
       display: grid;
@@ -203,9 +276,9 @@
 
     .week div {
       padding: 10px;
-      text-align: center;
       color: var(--muted);
       font-size: 11px;
+      text-align: center;
     }
 
     .day {
@@ -214,7 +287,7 @@
       padding: 9px;
       border: 1px solid var(--line);
       border-radius: 6px;
-      background: var(--panel-2);
+      background: var(--panel2);
     }
 
     .day.empty {
@@ -256,6 +329,11 @@
       cursor: pointer;
     }
 
+    .loading {
+      margin-top: 20px;
+      color: var(--muted);
+    }
+
     .overlay {
       position: fixed;
       inset: 0;
@@ -288,20 +366,6 @@
       background: transparent;
       font-size: 24px;
       cursor: pointer;
-    }
-
-    .modal input,
-    .modal textarea,
-    .modal select {
-      width: 100%;
-      margin: 6px 0;
-      padding: 11px;
-      border: 1px solid #354257;
-      border-radius: 6px;
-      outline: none;
-      color: #dfe7ef;
-      background: #0d1117;
-      font: inherit;
     }
 
     .modal textarea {
@@ -341,7 +405,10 @@
       .logo span { font-size: 19px; }
 
       .label,
-      .months-label { display: none; }
+      .months-label,
+      .nav .month {
+        display: none !important;
+      }
 
       .nav button {
         font-size: 0;
@@ -349,8 +416,6 @@
       }
 
       .nav button:first-letter { font-size: 17px; }
-
-      .nav .month { display: none !important; }
 
       main { padding: 0 13px; }
 
@@ -369,15 +434,432 @@
       }
 
       .day,
-      .week div { min-width: 95px; }
+      .week div {
+        min-width: 95px;
+      }
     }
   </style>
 </head>
 
 <body>
-  <div class="app">
+  <section id="authScreen" class="center-screen">
+    <div class="auth-card">
+      <h1>FieldView <span>SoMe</span></h1>
+      <p>Calendar editorial comun pentru echipa ta.</p>
+
+      <input class="field" id="email" type="email" placeholder="Adresa de email" />
+      <input class="field" id="password" type="password" placeholder="Parola — minimum 6 caractere" />
+
+      <button class="primary-btn" onclick="signIn()">Autentificare</button>
+      <button class="secondary-btn" onclick="signUp()">Creează cont</button>
+
+      <div class="message" id="authMessage"></div>
+    </div>
+  </section>
+
+  <div id="appScreen" class="app hidden">
     <aside>
       <div class="logo">FieldView <span>SoMe</span> <small>2026</small></div>
+
+      <div class="label">VIZUALIZARE</div>
+
+      <div class="nav">
+        <button class="active">📅 Calendar</button>
+        <button onclick="alert('Calendarul este ecranul principal în această versiune.')">▣ Listă posturi</button>
+        <button onclick="alert('Activitatea echipei poate fi adăugată în următoarea versiune.')">◷ Activitate echipă</button>
+        <button onclick="alert('Generatorul AI poate fi conectat ulterior printr-o Netlify Function.')">🤖 Generator AI</button>
+      </div>
+
+      <div class="label months-label">LUNI 2026</div>
+      <div class="nav" id="monthNav"></div>
+    </aside>
+
+    <main>
+      <header>
+        <span class="team-dot"></span>
+        <b>Echipă</b>
+        <span class="grow"></span>
+        <span class="user" id="userEmail">👤 Utilizator</span>
+        <button class="header-btn" onclick="loadPosts()">↻ Sync</button>
+        <button class="header-btn" onclick="signOut()">Ieșire</button>
+      </header>
+
+      <section class="stats">
+        <div class="stat"><b id="published" class="green">0</b><small>POSTATE</small></div>
+        <div class="stat"><b id="drafts" class="blue">0</b><small>DRAFT-URI</small></div>
+        <div class="stat"><b id="planned" class="purple">0</b><small>PLANIFICATE</small></div>
+        <div class="stat"><b id="thisMonth" class="orange">0</b><small>LUNA ACEASTA</small></div>
+        <div class="stat"><b id="total" class="red">0</b><small>TOTAL 2026</small></div>
+      </section>
+
+      <div class="heading">
+        <h1 id="calendarTitle">August 2026</h1>
+
+        <div>
+          <button onclick="moveMonth(-1)">← Prev</button>
+          <button onclick="moveMonth(1)">Next →</button>
+        </div>
+      </div>
+
+      <div class="week">
+        <div>Dum</div>
+        <div>Lun</div>
+        <div>Mar</div>
+        <div>Mie</div>
+        <div>Joi</div>
+        <div>Vin</div>
+        <div>Sâm</div>
+      </div>
+
+      <div class="calendar" id="calendar"></div>
+      <div id="loading" class="loading"></div>
+
+      <button class="new-post" onclick="openModal()">＋ Post nou</button>
+    </main>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <form class="modal" onsubmit="savePost(event)">
+      <button type="button" class="close" onclick="closeModal()">×</button>
+      <h2>Post nou</h2>
+
+      <input id="postTitle" required placeholder="Titlul postării" />
+      <textarea id="postText" placeholder="Textul postării"></textarea>
+
+      <div class="row">
+        <input id="postDate" type="date" required />
+
+        <select id="postPlatform">
+          <option>Facebook</option>
+          <option>Instagram</option>
+          <option>LinkedIn</option>
+          <option>TikTok</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <select id="postStatus">
+          <option value="draft">Draft</option>
+          <option value="planned">Planificat</option>
+          <option value="published">Publicat</option>
+        </select>
+
+        <input id="postOwner" placeholder="Responsabil" />
+      </div>
+
+      <button class="save">Salvează postarea</button>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    /*
+      COMPLETEAZĂ DOAR ACESTE DOUĂ VALORI.
+      Folosește Project URL și Publishable key.
+      NU folosi cheia sb_secret_.
+    */
+    const SUPABASE_URL = "https://svxqbnnusefdgsptqgva.supabase.co";
+    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_l_ggT4dbeGAqhtjHN-mdGA_A6XLits-";
+
+    const supabase = window.supabase.createClient(
+      SUPABASE_URL,
+     SUPABASE_PUBLISHABLE_KEY
+    );
+
+    const monthNames = [
+      "Ianuarie", "Februarie", "Martie", "Aprilie",
+      "Mai", "Iunie", "Iulie", "August",
+      "Septembrie", "Octombrie", "Noiembrie", "Decembrie"
+    ];
+
+    const monthShort = [
+      "IAN", "FEB", "MAR", "APR", "MAI", "IUN",
+      "IUL", "AUG", "SEP", "OCT", "NOI", "DEC"
+    ];
+
+    let currentDate = new Date();
+    let posts = [];
+    let currentUser = null;
+
+    function dateString(year, month, day) {
+      return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    }
+
+    function eventColor(status) {
+      if (status === "published") return "#49c95f";
+      if (status === "draft") return "#5ca9ff";
+      return "#bb8cff";
+    }
+
+    function setMessage(message) {
+      document.getElementById("authMessage").textContent = message;
+    }
+
+    async function signIn() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!email || !password) {
+        setMessage("Completează adresa de email și parola.");
+        return;
+      }
+
+      setMessage("Se face autentificarea...");
+
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      setMessage(error ? error.message : "");
+    }
+
+    async function signUp() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!email || password.length < 6) {
+        setMessage("Introdu emailul și o parolă de minimum 6 caractere.");
+        return;
+      }
+
+      setMessage("Se creează contul...");
+
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: window.location.origin
+        }
+      });
+
+      if (error) {
+        setMessage(error.message);
+        return;
+      }
+
+      setMessage("Cont creat. Verifică emailul și confirmă adresa înainte de autentificare.");
+    }
+
+    async function signOut() {
+      await supabase.auth.signOut();
+      posts = [];
+      document.getElementById("appScreen").classList.add("hidden");
+      document.getElementById("authScreen").classList.remove("hidden");
+      document.getElementById("password").value = "";
+      setMessage("");
+    }
+
+    async function showApp(session) {
+      currentUser = session.user;
+
+      document.getElementById("userEmail").textContent =
+        `👤 ${currentUser.email}`;
+
+      document.getElementById("authScreen").classList.add("hidden");
+      document.getElementById("appScreen").classList.remove("hidden");
+
+      await loadPosts();
+    }
+
+    async function loadPosts() {
+      document.getElementById("loading").textContent = "Se sincronizează postările...";
+
+      const { data, error } = await supabase
+        .from("posts")
+        .select("*")
+        .order("scheduled_at", { ascending: true });
+
+      if (error) {
+        document.getElementById("loading").textContent =
+          `Eroare: ${error.message}`;
+        return;
+      }
+
+      posts = data || [];
+      document.getElementById("loading").textContent = "";
+      render();
+    }
+
+    function render() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+
+      document.getElementById("calendarTitle").textContent =
+        `${monthNames[month]} ${year}`;
+
+      const calendar = document.getElementById("calendar");
+      calendar.innerHTML = "";
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysCount = new Date(year, month + 1, 0).getDate();
+
+      for (let index = 0; index < firstDay + daysCount; index++) {
+        const day = index - firstDay;
+        const cell = document.createElement("div");
+
+        if (day < 0) {
+          cell.className = "day empty";
+          calendar.appendChild(cell);
+          continue;
+        }
+
+        const dayNumber = day + 1;
+        const date = dateString(year, month, dayNumber);
+
+        cell.className = "day";
+        cell.innerHTML = `<div class="date">${dayNumber}</div>`;
+
+        posts
+          .filter(post => post.scheduled_at === date)
+          .forEach(post => {
+            const event = document.createElement("button");
+
+            event.className = "event";
+            event.style.borderLeftColor = eventColor(post.status);
+            event.textContent = `${post.platform}: ${post.title}`;
+
+            event.onclick = () => {
+              const ownerText = post.owner_id === currentUser.id
+                ? "Tu"
+                : (post.author_name || "Alt utilizator");
+
+              alert(
+                `Titlu: ${post.title}\n\n` +
+                `Platformă: ${post.platform}\n` +
+                `Status: ${post.status}\n` +
+                `Responsabil: ${ownerText}\n\n` +
+                `${post.body || ""}`
+              );
+            };
+
+            cell.appendChild(event);
+          });
+
+        calendar.appendChild(cell);
+      }
+
+      const yearPosts = posts.filter(post =>
+        post.scheduled_at.startsWith(String(year))
+      );
+
+      const monthPrefix =
+        `${year}-${String(month + 1).padStart(2, "0")}`;
+
+      document.getElementById("published").textContent =
+        yearPosts.filter(post => post.status === "published").length;
+
+      document.getElementById("drafts").textContent =
+        yearPosts.filter(post => post.status === "draft").length;
+
+      document.getElementById("planned").textContent =
+        yearPosts.filter(post => post.status === "planned").length;
+
+      document.getElementById("thisMonth").textContent =
+        posts.filter(post => post.scheduled_at.startsWith(monthPrefix)).length;
+
+      document.getElementById("total").textContent = yearPosts.length;
+
+      document.getElementById("monthNav").innerHTML =
+        monthShort.map((monthName, index) => {
+          const prefix =
+            `${year}-${String(index + 1).padStart(2, "0")}`;
+
+          const count = posts.filter(post =>
+            post.scheduled_at.startsWith(prefix)
+          ).length;
+
+          return `
+            <button
+              class="month ${index === month ? "selected" : ""}"
+              onclick="selectMonth(${index})"
+            >
+              ${monthName}
+              <span class="badge">${count}</span>
+            </button>
+          `;
+        }).join("");
+    }
+
+    function selectMonth(month) {
+      currentDate = new Date(currentDate.getFullYear(), month, 1);
+      render();
+    }
+
+    function moveMonth(direction) {
+      currentDate = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() + direction,
+        1
+      );
+
+      render();
+    }
+
+    function openModal() {
+      document.getElementById("postDate").value =
+        new Date().toISOString().slice(0, 10);
+
+      document.getElementById("overlay").classList.add("show");
+    }
+
+    function closeModal() {
+      document.getElementById("overlay").classList.remove("show");
+    }
+
+    async function savePost(event) {
+      event.preventDefault();
+
+      const button = event.target.querySelector(".save");
+      button.disabled = true;
+      button.textContent = "Se salvează...";
+
+      const post = {
+        title: document.getElementById("postTitle").value.trim(),
+        body: document.getElementById("postText").value.trim(),
+        scheduled_at: document.getElementById("postDate").value,
+        platform: document.getElementById("postPlatform").value,
+        status: document.getElementById("postStatus").value,
+        author_name: document.getElementById("postOwner").value.trim(),
+        owner_id: currentUser.id
+      };
+
+      const { error } = await supabase
+        .from("posts")
+        .insert(post);
+
+      button.disabled = false;
+      button.textContent = "Salvează postarea";
+
+      if (error) {
+        alert(`Postarea nu a putut fi salvată: ${error.message}`);
+        return;
+      }
+
+      event.target.reset();
+      closeModal();
+      await loadPosts();
+    }
+
+    async function initialize() {
+      const { data } = await supabase.auth.getSession();
+
+      if (data.session) {
+        await showApp(data.session);
+      }
+
+      supabase.auth.onAuthStateChange(async (_event, session) => {
+        if (session) {
+          await showApp(session);
+        }
+      });
+    }
+
+    initialize();
+  </script>
+</body>
+</html>      <div class="logo">FieldView <span>SoMe</span> <small>2026</small></div>
 
       <div class="label">VIZUALIZARE</div>
 
