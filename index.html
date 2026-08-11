@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SoMe Planner</title>
+
+  <style>
+    :root {
+      --bg: #0d1117;
+      --panel: #151b23;
+      --panel-2: #171d25;
+      --line: #293548;
+      --text: #c8d0da;
+      --muted: #8894a2;
+      --green: #49c95f;
+      --blue: #5ca9ff;
+      --purple: #bb8cff;
+      --orange: #fb9c47;
+      --red: #ff5b56;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+    }
+
+    aside {
+      width: 220px;
+      min-height: 100vh;
+      padding: 23px 12px;
+      background: #151a21;
+      border-right: 1px solid #222d38;
+    }
+
+    .logo {
+      padding: 0 12px 35px;
+      color: #eef4f9;
+      font-size: 22px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .logo span { color: var(--green); }
+    .logo small {
+      color: #96a1ad;
+      font-size: 12px;
+    }
+
+    .label {
+      margin: 12px;
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 1.4px;
+    }
+
+    .nav button {
+      width: 100%;
+      border: 0;
+      border-radius: 6px;
+      padding: 12px;
+      text-align: left;
+      font-size: 14px;
+      color: #aeb9c4;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .nav button.active {
+      color: #58d76d;
+      background: #1c6630;
+    }
+
+    .months-label { margin-top: 30px; }
+
+    .month {
+      display: flex !important;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 12px !important;
+      font-size: 11px !important;
+    }
+
+    .month.selected { color: var(--blue); }
+
+    .badge {
+      padding: 2px 6px;
+      border-radius: 12px;
+      background: #202b3c;
+      font-size: 9px;
+    }
+
+    main {
+      flex: 1;
+      min-width: 0;
+      padding: 0 28px 30px;
+    }
+
+    header {
+      height: 87px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 -28px 31px;
+      padding: 0 28px;
+      border-top: 2px solid #826515;
+      border-bottom: 1px solid #273142;
+    }
+
+    .team-dot {
+      width: 8px;
+      height: 8px;
+      border: 2px solid var(--green);
+      border-radius: 50%;
+    }
+
+    .grow { flex: 1; }
+
+    .user,
+    .header-btn,
+    .nav-month {
+      border: 1px solid #2d3a50;
+      background: #182130;
+      color: #c9d2dc;
+      border-radius: 7px;
+      padding: 9px 13px;
+    }
+
+    .user { border-radius: 20px; }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 35px;
+    }
+
+    .stat {
+      min-height: 107px;
+      padding: 21px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--panel);
+    }
+
+    .stat b {
+      display: block;
+      font-size: 29px;
+    }
+
+    .stat small {
+      display: block;
+      margin-top: 9px;
+      color: #9aa5b1;
+      font-size: 10px;
+      letter-spacing: 1px;
+    }
+
+    .green { color: var(--green); }
+    .blue { color: var(--blue); }
+    .purple { color: var(--purple); }
+    .orange { color: var(--orange); }
+    .red { color: var(--red); }
+
+    .heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .heading h1 {
+      margin: 0;
+      color: #e3eaf1;
+      font-size: 24px;
+    }
+
+    .heading button {
+      margin-left: 6px;
+      padding: 9px 13px;
+      color: #cbd5df;
+      background: #182130;
+      border: 1px solid #2d3a50;
+      border-radius: 7px;
+      cursor: pointer;
+    }
+
+    .week,
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(95px, 1fr));
+      gap: 4px;
+    }
+
+    .week div {
+      padding: 10px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .day {
+      height: 106px;
+      overflow: hidden;
+      padding: 9px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel-2);
+    }
+
+    .day.empty {
+      border-color: transparent;
+      background: transparent;
+    }
+
+    .date {
+      color: #aab5c1;
+      font-size: 12px;
+    }
+
+    .event {
+      display: block;
+      width: 100%;
+      overflow: hidden;
+      margin-top: 7px;
+      padding: 4px 5px;
+      border: 0;
+      border-left: 3px solid var(--purple);
+      border-radius: 3px;
+      color: #dce4ec;
+      background: #202937;
+      font-size: 10px;
+      text-align: left;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .new-post {
+      margin-top: 27px;
+      padding: 10px 15px;
+      border: 0;
+      border-radius: 6px;
+      color: #092212;
+      background: var(--green);
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: none;
+      place-items: center;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.68);
+    }
+
+    .overlay.show { display: grid; }
+
+    .modal {
+      width: min(540px, 100%);
+      padding: 22px;
+      border: 1px solid #354257;
+      border-radius: 10px;
+      background: #151b23;
+    }
+
+    .modal h2 {
+      margin: 0 0 12px;
+      color: #e7eef5;
+    }
+
+    .close {
+      float: right;
+      border: 0;
+      color: white;
+      background: transparent;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .modal input,
+    .modal textarea,
+    .modal select {
+      width: 100%;
+      margin: 6px 0;
+      padding: 11px;
+      border: 1px solid #354257;
+      border-radius: 6px;
+      outline: none;
+      color: #dfe7ef;
+      background: #0d1117;
+      font: inherit;
+    }
+
+    .modal textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .save {
+      width: 100%;
+      margin-top: 8px;
+      padding: 11px;
+      border: 0;
+      border-radius: 6px;
+      color: #092212;
+      background: var(--green);
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    @media (max-width: 850px) {
+      aside {
+        width: 62px;
+        padding: 20px 6px;
+      }
+
+      .logo {
+        padding: 5px 0 30px;
+        font-size: 0;
+        text-align: center;
+      }
+
+      .logo span { font-size: 19px; }
+
+      .label,
+      .months-label { display: none; }
+
+      .nav button {
+        font-size: 0;
+        text-align: center;
+      }
+
+      .nav button:first-letter { font-size: 17px; }
+
+      .nav .month { display: none !important; }
+
+      main { padding: 0 13px; }
+
+      header {
+        margin: 0 -13px 20px;
+        padding: 0 13px;
+      }
+
+      .user { display: none; }
+
+      .stats { grid-template-columns: repeat(2, 1fr); }
+
+      .calendar,
+      .week {
+        overflow-x: auto;
+      }
+
+      .day,
+      .week div { min-width: 95px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <aside>
+      <div class="logo">FieldView <span>SoMe</span> <small>2026</small></div>
+
+      <div class="label">VIZUALIZARE</div>
+
+      <div class="nav">
+        <button class="active">📅 Calendar</button>
+        <button onclick="alert('Pagina Listă posturi poate fi adăugată în versiunea Supabase.')">▣ Listă posturi</button>
+        <button onclick="alert('Pagina Activitate echipă poate fi adăugată în versiunea Supabase.')">◷ Activitate echipă</button>
+        <button onclick="alert('Generatorul AI se conectează ulterior la un API securizat.')">🤖 Generator AI</button>
+      </div>
+
+      <div class="label months-label">LUNI 2026</div>
+      <div class="nav" id="monthNav"></div>
+    </aside>
+
+    <main>
+      <header>
+        <span class="team-dot"></span>
+        <b>Echipă</b>
+        <span class="grow"></span>
+        <span class="user">👤 Utilizator</span>
+        <button class="header-btn" onclick="render()">↻ Sync</button>
+      </header>
+
+      <section class="stats">
+        <div class="stat">
+          <b id="published" class="green">0</b>
+          <small>POSTATE</small>
+        </div>
+
+        <div class="stat">
+          <b id="drafts" class="blue">0</b>
+          <small>DRAFT-URI</small>
+        </div>
+
+        <div class="stat">
+          <b id="planned" class="purple">0</b>
+          <small>PLANIFICATE</small>
+        </div>
+
+        <div class="stat">
+          <b id="thisMonth" class="orange">0</b>
+          <small>LUNA ACEASTA</small>
+        </div>
+
+        <div class="stat">
+          <b id="total" class="red">0</b>
+          <small>TOTAL 2026</small>
+        </div>
+      </section>
+
+      <div class="heading">
+        <h1 id="calendarTitle">August 2026</h1>
+
+        <div>
+          <button onclick="moveMonth(-1)">← Prev</button>
+          <button onclick="moveMonth(1)">Next →</button>
+        </div>
+      </div>
+
+      <div class="week">
+        <div>Dum</div>
+        <div>Lun</div>
+        <div>Mar</div>
+        <div>Mie</div>
+        <div>Joi</div>
+        <div>Vin</div>
+        <div>Sâm</div>
+      </div>
+
+      <div class="calendar" id="calendar"></div>
+
+      <button class="new-post" onclick="openModal()">＋ Post nou</button>
+    </main>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <form class="modal" onsubmit="savePost(event)">
+      <button type="button" class="close" onclick="closeModal()">×</button>
+      <h2>Post nou</h2>
+
+      <input id="postTitle" required placeholder="Titlul postării" />
+      <textarea id="postText" placeholder="Textul postării"></textarea>
+
+      <div class="row">
+        <input id="postDate" type="date" required />
+
+        <select id="postPlatform">
+          <option>Facebook</option>
+          <option>Instagram</option>
+          <option>LinkedIn</option>
+          <option>TikTok</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <select id="postStatus">
+          <option value="draft">Draft</option>
+          <option value="planned">Planificat</option>
+          <option value="published">Publicat</option>
+        </select>
+
+        <input id="postOwner" placeholder="Responsabil" />
+      </div>
+
+      <button class="save">Salvează postarea</button>
+    </form>
+  </div>
+
+  <script>
+    const monthNames = [
+      "Ianuarie", "Februarie", "Martie", "Aprilie",
+      "Mai", "Iunie", "Iulie", "August",
+      "Septembrie", "Octombrie", "Noiembrie", "Decembrie"
+    ];
+
+    const monthShort = [
+      "IAN", "FEB", "MAR", "APR", "MAI", "IUN",
+      "IUL", "AUG", "SEP", "OCT", "NOI", "DEC"
+    ];
+
+    let currentDate = new Date(2026, 7, 1);
+
+    let posts = JSON.parse(
+      localStorage.getItem("somePlannerPosts") || "[]"
+    );
+
+    function dateString(year, month, day) {
+      return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    }
+
+    function eventColor(status) {
+      if (status === "published") return "#49c95f";
+      if (status === "draft") return "#5ca9ff";
+      return "#bb8cff";
+    }
+
+    function render() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+
+      document.getElementById("calendarTitle").textContent =
+        `${monthNames[month]} ${year}`;
+
+      const calendar = document.getElementById("calendar");
+      calendar.innerHTML = "";
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysCount = new Date(year, month + 1, 0).getDate();
+
+      for (let index = 0; index < firstDay + daysCount; index++) {
+        const day = index - firstDay;
+        const cell = document.createElement("div");
+
+        if (day < 0) {
+          cell.className = "day empty";
+          calendar.appendChild(cell);
+          continue;
+        }
+
+        const dayNumber = day + 1;
+        const currentDay = dateString(year, month, dayNumber);
+
+        cell.className = "day";
+        cell.innerHTML = `<div class="date">${dayNumber}</div>`;
+
+        posts
+          .filter(post => post.date === currentDay)
+          .forEach(post => {
+            const event = document.createElement("button");
+            event.className = "event";
+            event.style.borderLeftColor = eventColor(post.status);
+            event.textContent = `${post.platform}: ${post.title}`;
+
+            event.onclick = () => {
+              alert(
+                `Titlu: ${post.title}\n\n` +
+                `Platformă: ${post.platform}\n` +
+                `Status: ${post.status}\n` +
+                `Responsabil: ${post.owner || "-"}\n\n` +
+                `${post.text || ""}`
+              );
+            };
+
+            cell.appendChild(event);
+          });
+
+        calendar.appendChild(cell);
+      }
+
+      const postsInYear = posts.filter(post => post.date.startsWith(year));
+      const currentMonthPrefix = `${year}-${String(month + 1).padStart(2, "0")}`;
+
+      document.getElementById("published").textContent =
+        postsInYear.filter(post => post.status === "published").length;
+
+      document.getElementById("drafts").textContent =
+        postsInYear.filter(post => post.status === "draft").length;
+
+      document.getElementById("planned").textContent =
+        postsInYear.filter(post => post.status === "planned").length;
+
+      document.getElementById("thisMonth").textContent =
+        posts.filter(post => post.date.startsWith(currentMonthPrefix)).length;
+
+      document.getElementById("total").textContent = postsInYear.length;
+
+      const monthNav = document.getElementById("monthNav");
+
+      monthNav.innerHTML = monthShort.map((name, index) => {
+        const prefix = `${year}-${String(index + 1).padStart(2, "0")}`;
+        const count = posts.filter(post => post.date.startsWith(prefix)).length;
+
+        return `
+          <button
+            class="month ${index === month ? "selected" : ""}"
+            onclick="selectMonth(${index})"
+          >
+            ${name}
+            <span class="badge">${count}</span>
+          </button>
+        `;
+      }).join("");
+    }
+
+    function selectMonth(month) {
+      currentDate = new Date(currentDate.getFullYear(), month, 1);
+      render();
+    }
+
+    function moveMonth(direction) {
+      currentDate = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() + direction,
+        1
+      );
+
+      render();
+    }
+
+    function openModal() {
+      document.getElementById("postDate").value =
+        new Date().toISOString().slice(0, 10);
+
+      document.getElementById("overlay").classList.add("show");
+    }
+
+    function closeModal() {
+      document.getElementById("overlay").classList.remove("show");
+    }
+
+    function savePost(event) {
+      event.preventDefault();
+
+      const post = {
+        id: crypto.randomUUID(),
+        title: document.getElementById("postTitle").value,
+        text: document.getElementById("postText").value,
+        date: document.getElementById("postDate").value,
+        platform: document.getElementById("postPlatform").value,
+        status: document.getElementById("postStatus").value,
+        owner: document.getElementById("postOwner").value
+      };
+
+      posts.push(post);
+
+      localStorage.setItem(
+        "somePlannerPosts",
+        JSON.stringify(posts)
+      );
+
+      event.target.reset();
+      closeModal();
+      render();
+    }
+
+    render();
+  </script>
+</body>
+</html>
