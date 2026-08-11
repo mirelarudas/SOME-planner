@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FieldView SoMe Planner</title>
+
+  <style>
+    :root {
+      --bg: #0d1117;
+      --sidebar: #151a21;
+      --panel: #151b23;
+      --panel2: #171d25;
+      --line: #293548;
+      --text: #dbe3eb;
+      --muted: #909dab;
+      --green: #49c95f;
+      --blue: #5ca9ff;
+      --purple: #bb8cff;
+      --orange: #fb9c47;
+      --red: #ff5b56;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background: var(--bg);
+      font-family: Arial, sans-serif;
+    }
+
+    button, input, textarea, select {
+      font: inherit;
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    aside {
+      width: 220px;
+      padding: 24px 12px;
+      background: var(--sidebar);
+      border-right: 1px solid #273142;
+    }
+
+    .logo {
+      padding: 0 12px 32px;
+      color: white;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .logo span { color: var(--green); }
+
+    .logo small {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .nav-title {
+      margin: 12px;
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 1px;
+    }
+
+    .nav-item {
+      margin: 2px 0;
+      padding: 12px;
+      border-radius: 6px;
+      color: #aeb9c4;
+    }
+
+    .nav-item.active {
+      color: #59d76d;
+      background: #1c6630;
+    }
+
+    main {
+      flex: 1;
+      min-width: 0;
+      padding: 0 28px 30px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      height: 85px;
+      margin: 0 -28px 30px;
+      padding: 0 28px;
+      border-top: 2px solid #826515;
+      border-bottom: 1px solid #273142;
+    }
+
+    .grow { flex: 1; }
+
+    .sync {
+      padding: 9px 13px;
+      border: 1px solid #354257;
+      border-radius: 8px;
+      color: #dbe3eb;
+      background: #182130;
+      cursor: pointer;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    .stat {
+      min-height: 95px;
+      padding: 18px;
+      border: 1px solid #2d3a4d;
+      border-radius: 9px;
+      background: var(--panel);
+    }
+
+    .stat b {
+      display: block;
+      font-size: 28px;
+    }
+
+    .stat small {
+      display: block;
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 1px;
+    }
+
+    .heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
+    .heading h2 {
+      margin: 0;
+      color: white;
+    }
+
+    .heading button {
+      margin-left: 5px;
+      padding: 9px 12px;
+      border: 1px solid #354257;
+      border-radius: 7px;
+      color: #dbe3eb;
+      background: #182130;
+      cursor: pointer;
+    }
+
+    .week, .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(90px, 1fr));
+      gap: 4px;
+    }
+
+    .week div {
+      padding: 10px;
+      color: var(--muted);
+      font-size: 11px;
+      text-align: center;
+    }
+
+    .day {
+      height: 105px;
+      overflow: hidden;
+      padding: 8px;
+      border: 1px solid #2d3a4d;
+      border-radius: 6px;
+      background: var(--panel2);
+    }
+
+    .day.empty {
+      border-color: transparent;
+      background: transparent;
+    }
+
+    .day-number {
+      color: #aab5c1;
+      font-size: 12px;
+    }
+
+    .event {
+      display: block;
+      width: 100%;
+      overflow: hidden;
+      margin-top: 6px;
+      padding: 4px;
+      border: 0;
+      border-left: 3px solid var(--purple);
+      border-radius: 3px;
+      color: #dbe3eb;
+      background: #202937;
+      font-size: 10px;
+      text-align: left;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .new-post, .save {
+      border: 0;
+      border-radius: 6px;
+      color: #092212;
+      background: var(--green);
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .new-post {
+      margin-top: 25px;
+      padding: 10px 14px;
+    }
+
+    .loading {
+      min-height: 22px;
+      margin-top: 12px;
+      color: var(--muted);
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: none;
+      place-items: center;
+      padding: 15px;
+      background: rgba(0, 0, 0, .7);
+    }
+
+    .overlay.show { display: grid; }
+
+    .modal {
+      width: min(520px, 100%);
+      padding: 22px;
+      border: 1px solid #354257;
+      border-radius: 10px;
+      background: var(--panel);
+    }
+
+    .modal h2 { margin: 0 0 12px; }
+
+    .close {
+      float: right;
+      border: 0;
+      color: white;
+      background: none;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      margin: 6px 0;
+      padding: 12px;
+      border: 1px solid #354257;
+      border-radius: 7px;
+      color: white;
+      background: #0d1117;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .save {
+      width: 100%;
+      margin-top: 8px;
+      padding: 12px;
+    }
+
+    @media (max-width: 800px) {
+      aside { display: none; }
+
+      main { padding: 0 13px 30px; }
+
+      header {
+        margin: 0 -13px 20px;
+        padding: 0 13px;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .week, .calendar {
+        overflow-x: auto;
+      }
+
+      .week div, .day {
+        min-width: 90px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <aside>
+      <div class="logo">FieldView <span>SoMe</span> <small>2026</small></div>
+
+      <div class="nav-title">VIZUALIZARE</div>
+      <div class="nav-item active">📅 Calendar</div>
+      <div class="nav-item">▣ Listă posturi</div>
+      <div class="nav-item">◷ Activitate echipă</div>
+      <div class="nav-item">🤖 Generator AI</div>
+    </aside>
+
+    <main>
+      <header>
+        <b>● Echipă</b>
+        <span class="grow"></span>
+        <button class="sync" onclick="loadPosts()">↻ Sync</button>
+      </header>
+
+      <div class="stats">
+        <div class="stat">
+          <b id="published" style="color:#49c95f">0</b>
+          <small>POSTATE</small>
+        </div>
+
+        <div class="stat">
+          <b id="drafts" style="color:#5ca9ff">0</b>
+          <small>DRAFT-URI</small>
+        </div>
+
+        <div class="stat">
+          <b id="planned" style="color:#bb8cff">0</b>
+          <small>PLANIFICATE</small>
+        </div>
+
+        <div class="stat">
+          <b id="monthCount" style="color:#fb9c47">0</b>
+          <small>LUNA ACEASTA</small>
+        </div>
+
+        <div class="stat">
+          <b id="total" style="color:#ff5b56">0</b>
+          <small>TOTAL ANUAL</small>
+        </div>
+      </div>
+
+      <div class="heading">
+        <h2 id="monthTitle"></h2>
+
+        <div>
+          <button onclick="moveMonth(-1)">← Prev</button>
+          <button onclick="moveMonth(1)">Next →</button>
+        </div>
+      </div>
+
+      <div class="week">
+        <div>Dum</div><div>Lun</div><div>Mar</div>
+        <div>Mie</div><div>Joi</div><div>Vin</div><div>Sâm</div>
+      </div>
+
+      <div id="calendar" class="calendar"></div>
+      <div id="loading" class="loading"></div>
+
+      <button class="new-post" onclick="openModal()">＋ Post nou</button>
+    </main>
+  </div>
+
+  <div id="modalOverlay" class="overlay">
+    <form class="modal" onsubmit="savePost(event)">
+      <button type="button" class="close" onclick="closeModal()">×</button>
+      <h2>Post nou</h2>
+
+      <input id="postTitle" required placeholder="Titlul postării">
+      <textarea id="postBody" placeholder="Textul postării"></textarea>
+
+      <div class="row">
+        <input id="postDate" type="date" required>
+
+        <select id="postPlatform">
+          <option>Facebook</option>
+          <option>Instagram</option>
+          <option>LinkedIn</option>
+          <option>TikTok</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <select id="postStatus">
+          <option value="draft">Draft</option>
+          <option value="planned">Planificat</option>
+          <option value="published">Publicat</option>
+        </select>
+
+        <input value="Echipă FieldView" readonly>
+      </div>
+
+      <button class="save">Salvează postarea</button>
+    </form>
+  </div>
+
+  <script>
+    /* COMPLETEAZĂ DOAR ACESTE DOUĂ LINII */
+    const SUPABASE_URL = "PUNE_URL_AICI";
+    const SUPABASE_KEY = "PUNE_CHEIA_AICI";
+
+    const MONTHS = [
+      "Ianuarie", "Februarie", "Martie", "Aprilie",
+      "Mai", "Iunie", "Iulie", "August",
+      "Septembrie", "Octombrie", "Noiembrie", "Decembrie"
+    ];
+
+    let selectedDate = new Date();
+    let posts = [];
+
+    function headers() {
+      return {
+        "apikey": SUPABASE_KEY,
+        "Authorization": "Bearer " + SUPABASE_KEY,
+        "Content-Type": "application/json"
+      };
+    }
+
+    async function loadPosts() {
+      document.getElementById("loading").textContent =
+        "Se sincronizează postările...";
+
+      try {
+        const response = await fetch(
+          SUPABASE_URL + "/rest/v1/posts?select=*&order=scheduled_at.asc",
+          { headers: headers() }
+        );
+
+        if (!response.ok) {
+          throw new Error(await response.text());
+        }
+
+        posts = await response.json();
+        document.getElementById("loading").textContent = "";
+        render();
+      } catch (error) {
+        console.error(error);
+        document.getElementById("loading").textContent =
+          "Eroare la sincronizare. Verifică URL-ul și Publishable key.";
+      }
+    }
+
+    function render() {
+      const year = selectedDate.getFullYear();
+      const month = selectedDate.getMonth();
+
+      document.getElementById("monthTitle").textContent =
+        MONTHS[month] + " " + year;
+
+      const calendar = document.getElementById("calendar");
+      calendar.innerHTML = "";
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysCount = new Date(year, month + 1, 0).getDate();
+
+      for (let i = 0; i < firstDay + daysCount; i++) {
+        const day = i - firstDay + 1;
+        const cell = document.createElement("div");
+
+        if (day <= 0) {
+          cell.className = "day empty";
+          calendar.appendChild(cell);
+          continue;
+        }
+
+        const date =
+          year + "-" +
+          String(month + 1).padStart(2, "0") + "-" +
+          String(day).padStart(2, "0");
+
+        cell.className = "day";
+        cell.innerHTML = '<div class="day-number">' + day + "</div>";
+
+        posts
+          .filter(post => post.scheduled_at === date)
+          .forEach(post => {
+            const item = document.createElement("button");
+
+            item.className = "event";
+
+            if (post.status === "draft") {
+              item.style.borderLeftColor = "#5ca9ff";
+            } else if (post.status === "published") {
+              item.style.borderLeftColor = "#49c95f";
+            }
+
+            item.textContent = post.platform + ": " + post.title;
+
+            item.onclick = () => {
+              alert(
+                "Titlu: " + post.title +
+                "\n\nPlatformă: " + post.platform +
+                "\nStatus: " + post.status +
+                "\n\n" + (post.body || "")
+              );
+            };
+
+            cell.appendChild(item);
+          });
+
+        calendar.appendChild(cell);
+      }
+
+      const yearly = posts.filter(post =>
+        post.scheduled_at.startsWith(String(year))
+      );
+
+      const prefix = year + "-" + String(month + 1).padStart(2, "0");
+
+      document.getElementById("published").textContent =
+        yearly.filter(post => post.status === "published").length;
+
+      document.getElementById("drafts").textContent =
+        yearly.filter(post => post.status === "draft").length;
+
+      document.getElementById("planned").textContent =
+        yearly.filter(post => post.status === "planned").length;
+
+      document.getElementById("monthCount").textContent =
+        posts.filter(post => post.scheduled_at.startsWith(prefix)).length;
+
+      document.getElementById("total").textContent = yearly.length;
+    }
+
+    function moveMonth(direction) {
+      selectedDate = new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth() + direction,
+        1
+      );
+
+      render();
+    }
+
+    function openModal() {
+      document.getElementById("postDate").value =
+        new Date().toISOString().slice(0, 10);
+
+      document.getElementById("modalOverlay").classList.add("show");
+    }
+
+    function closeModal() {
+      document.getElementById("modalOverlay").classList.remove("show");
+    }
+
+    async function savePost(event) {
+      event.preventDefault();
+
+      const post = {
+        title: document.getElementById("postTitle").value.trim(),
+        body: document.getElementById("postBody").value.trim(),
+        scheduled_at: document.getElementById("postDate").value,
+        platform: document.getElementById("postPlatform").value,
+        status: document.getElementById("postStatus").value,
+        author_name: "Echipă FieldView"
+      };
+
+      try {
+        const response = await fetch(
+          SUPABASE_URL + "/rest/v1/posts",
+          {
+            method: "POST",
+            headers: {
+              ...headers(),
+              "Prefer": "return=representation"
+            },
+            body: JSON.stringify(post)
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(await response.text());
+        }
+
+        event.target.reset();
+        closeModal();
+        loadPosts();
+      } catch (error) {
+        console.error(error);
+        alert("Postarea nu a putut fi salvată. Verifică setarea Supabase.");
+      }
+    }
+
+    loadPosts();
+  </script>
+</body>
+</html>
