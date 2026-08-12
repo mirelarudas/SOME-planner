@@ -501,6 +501,7 @@
             }
 
             item.textContent = post.platform + ": " + post.title;
+            item.dataset.postId = post.id;
 
             item.onclick = () => {
               alert(
@@ -597,7 +598,116 @@
       }
     }
 
-    loadPosts();
+   document.getElementById("calendar").addEventListener(
+  "click",
+  function(event) {
+    const item = event.target.closest(".event");
+
+    if (!item) return;
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    const post = posts.find(
+      post => post.id === item.dataset.postId
+    );
+
+    if (post) {
+      editPost(post);
+    }
+  },
+  true
+);
+
+function editPost(post) {
+  window.editingPost = post;
+
+  document.getElementById("postTitle").value = post.title || "";
+  document.getElementById("postBody").value = post.body || "";
+  document.getElementById("postDate").value = post.scheduled_at || "";
+  document.getElementById("postPlatform").value = post.platform || "Facebook";
+  document.getElementById("postStatus").value = post.status || "draft";
+
+  document.querySelector(".modal h2").textContent =
+    "Editează postarea";
+
+  document.querySelector(".save").textContent =
+    "Salvează modificările";
+
+  document.getElementById("modalOverlay").classList.add("show");
+}
+
+function openModal() {
+  window.editingPost = null;
+
+  document.getElementById("postTitle").value = "";
+  document.getElementById("postBody").value = "";
+  document.getElementById("postDate").value =
+    new Date().toISOString().slice(0, 10);
+
+  document.getElementById("postPlatform").value = "Facebook";
+  document.getElementById("postStatus").value = "draft";
+
+  document.querySelector(".modal h2").textContent =
+    "Post nou";
+
+  document.querySelector(".save").textContent =
+    "Salvează postarea";
+
+  document.getElementById("modalOverlay").classList.add("show");
+}
+
+async function savePost(event) {
+  event.preventDefault();
+
+  const button = document.querySelector(".save");
+  button.disabled = true;
+  button.textContent = "Se salvează...";
+
+  const post = {
+    title: document.getElementById("postTitle").value.trim(),
+    body: document.getElementById("postBody").value.trim(),
+    scheduled_at: document.getElementById("postDate").value,
+    platform: document.getElementById("postPlatform").value,
+    status: document.getElementById("postStatus").value,
+    author_name: "Echipă FieldView"
+  };
+
+  const isEditing = Boolean(window.editingPost);
+
+  const url = isEditing
+    ? SUPABASE_URL +
+      "/rest/v1/posts?id=eq." +
+      encodeURIComponent(window.editingPost.id)
+    : SUPABASE_URL + "/rest/v1/posts";
+
+  try {
+    const response = await fetch(url, {
+      method: isEditing ? "PATCH" : "POST",
+      headers: {
+        ...headers(),
+        "Prefer": "return=representation"
+      },
+      body: JSON.stringify(post)
+    });
+
+    if (!response.ok) {
+      throw new Error(await response.text());
+    }
+
+    window.editingPost = null;
+    closeModal();
+    await loadPosts();
+  } catch (error) {
+    console.error(error);
+    alert("Postarea nu a putut fi salvată.");
+  } finally {
+    button.disabled = false;
+    button.textContent = "Salvează postarea";
+  }
+}
+
+loadPosts();
   </script>
 </body>
 </html>
