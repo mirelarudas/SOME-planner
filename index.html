@@ -311,33 +311,6 @@
   margin: 0;
   accent-color: #49c95f;
 } 
-    .brand-count {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 4px 8px;
-  padding: 7px 5px;
-  color: #b7c1cb;
-  font-size: 12px;
-}
-
-.brand-count b {
-  min-width: 21px;
-  padding: 2px 6px;
-  border-radius: 10px;
-  background: #202b3c;
-  color: #e4ebf2;
-  font-size: 10px;
-  text-align: center;
-}
-
-.fieldview span { color: #f59e0b; }
-.magictrap span { color: #facc15; }
-.cp span { color: #38bdf8; }
-.corn span { color: #ef4444; }
-.osr span { color: #a3e635; }
-.sf span { color: #c084fc; }
-.other span { color: #94a3b8; }
     @media (max-width: 800px) {
       aside { display: none; }
 
@@ -372,42 +345,6 @@
      <div class="nav-item active">
        📅 Calendar</div>
 <div class="nav-item">▣ Listă posturi</div>
-      <div class="nav-title">POSTĂRI ÎN LUNĂ</div>
-
-<div class="brand-count fieldview">
-  <span>● FieldView</span>
-  <b id="countFieldView">0</b>
-</div>
-
-<div class="brand-count magictrap">
-  <span>● MagicTrap</span>
-  <b id="countMagicTrap">0</b>
-</div>
-
-<div class="brand-count cp">
-  <span>● CP</span>
-  <b id="countCP">0</b>
-</div>
-
-<div class="brand-count corn">
-  <span>● Corn</span>
-  <b id="countCorn">0</b>
-</div>
-
-<div class="brand-count osr">
-  <span>● OSR</span>
-  <b id="countOSR">0</b>
-</div>
-
-<div class="brand-count sf">
-  <span>● SF</span>
-  <b id="countSF">0</b>
-</div>
-
-<div class="brand-count other">
-  <span>● Other</span>
-  <b id="countOther">0</b>
-</div>
     </aside>
 
     <main>
@@ -501,15 +438,6 @@
 
       <div class="row">
         <select id="postStatus">
-          <select id="postBrand">
-  <option value="FieldView">FieldView</option>
-  <option value="MagicTrap">MagicTrap</option>
-  <option value="CP">CP</option>
-  <option value="Corn">Corn</option>
-  <option value="OSR">OSR</option>
-  <option value="SF">SF</option>
-  <option value="Other">Other</option>
-</select>
           <option value="draft">Draft</option>
           <option value="planned">Planificat</option>
           <option value="published">Publicat</option>
@@ -606,18 +534,10 @@
 
             item.className = "event";
 
-           const brandColors = {
-  FieldView: "#f59e0b",
-  MagicTrap: "#facc15",
-  CP: "#38bdf8",
-  Corn: "#ef4444",
-  OSR: "#a3e635",
-  SF: "#c084fc",
-  Other: "#94a3b8";
-}
-
-item.style.borderLeftColor =
-  brandColors[post.brand] || brandColors.Other;
+            if (post.status === "draft") {
+              item.style.borderLeftColor = "#5ca9ff";
+            } else if (post.status === "published") {
+              item.style.borderLeftColor = "#49c95f";
             }
 
             item.textContent = post.platform + ": " + post.title;
@@ -643,29 +563,6 @@ item.style.borderLeftColor =
       );
 
       const prefix = year + "-" + String(month + 1).padStart(2, "0");
-    const monthlyPosts = posts.filter(post =>
-  post.scheduled_at.startsWith(prefix)
-);
-
-const brands = [
-  "FieldView",
-  "MagicTrap",
-  "CP",
-  "Corn",
-  "OSR",
-  "SF",
-  "Other"
-];
-
-brands.forEach(brand => {
-  const element = document.getElementById("count" + brand);
-
-  if (element) {
-    element.textContent = monthlyPosts.filter(post =>
-      (post.brand || "Other") === brand
-    ).length;
-  }
-});
 
       document.getElementById("published").textContent =
         yearly.filter(post => post.status === "published").length;
@@ -722,7 +619,6 @@ if (selectedPlatforms.length === 0) {
   document.querySelectorAll('input[name="platform"]:checked')
 ).map(item => item.value).join(", "),
         status: document.getElementById("postStatus").value,
-brand: document.getElementById("postBrand").value,
         author_name: "FieldView"
       };
 
@@ -779,8 +675,6 @@ function editPost(post) {
   document.getElementById("postTitle").value = post.title || "";
   document.getElementById("postBody").value = post.body || "";
   document.getElementById("postDate").value = post.scheduled_at || "";
-  document.getElementById("postBrand").value =
-  post.brand || "Other";
   const activePlatforms = (post.platform || "")
   .split(",")
   .map(item => item.trim());
