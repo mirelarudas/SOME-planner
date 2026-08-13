@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Bayer Planner</title>
+  <title>FieldView SoMe Planner</title>
 
   <style>
     :root {
@@ -339,19 +339,20 @@
 <body>
   <div class="app">
     <aside>
-    <div class="logo">Bayer Planner <small>2026</small></div>
+      <div class="logo">FieldView <span>SoMe</span> <small>2026</small></div>
 
       <div class="nav-title">VIZUALIZARE</div>
-     <div class="nav-item active">
-       📅 Calendar</div>
-<div class="nav-item">▣ Listă posturi</div>
+      <div class="nav-item active">📅 Calendar</div>
+      <div class="nav-item">▣ Listă posturi</div>
+      <div class="nav-item">◷ Activitate echipă</div>
+      <div class="nav-item">🤖 Generator AI</div>
     </aside>
 
     <main>
       <header>
         <b>● Echipă</b>
         <span class="grow"></span>
-      
+        <button class="sync" onclick="loadPosts()">↻ Sync</button>
       </header>
 
       <div class="stats">
@@ -443,7 +444,7 @@
           <option value="published">Publicat</option>
         </select>
 
-        <input value="FieldView" readonly>
+        <input value="Echipă FieldView" readonly>
       </div>
 
       <button class="save">Salvează postarea</button>
@@ -591,7 +592,6 @@
 
     function openModal() {
       document.getElementById("postDate").value =
-        author_name: document.getElementById("postOwner").value.trim()
         new Date().toISOString().slice(0, 10);
 
       document.getElementById("modalOverlay").classList.add("show");
@@ -604,23 +604,13 @@
     async function savePost(event) {
       event.preventDefault();
 
-      const selectedPlatforms = document.querySelectorAll(
-  'input[name="platform"]:checked'
-);
-
-if (selectedPlatforms.length === 0) {
-  alert("Selectează cel puțin un canal.");
-  return;
-}
       const post = {
         title: document.getElementById("postTitle").value.trim(),
         body: document.getElementById("postBody").value.trim(),
         scheduled_at: document.getElementById("postDate").value,
-       platform: Array.from(
-  document.querySelectorAll('input[name="platform"]:checked')
-).map(item => item.value).join(", "),
+        platform: document.getElementById("postPlatform").value,
         status: document.getElementById("postStatus").value,
-        author_name: "FieldView"
+        author_name: "Echipă FieldView"
       };
 
       try {
@@ -676,13 +666,7 @@ function editPost(post) {
   document.getElementById("postTitle").value = post.title || "";
   document.getElementById("postBody").value = post.body || "";
   document.getElementById("postDate").value = post.scheduled_at || "";
-  const activePlatforms = (post.platform || "")
-  .split(",")
-  .map(item => item.trim());
-
-document.querySelectorAll('input[name="platform"]').forEach(item => {
-  item.checked = activePlatforms.includes(item.value);
-});
+  document.getElementById("postPlatform").value = post.platform || "Facebook";
   document.getElementById("postStatus").value = post.status || "draft";
 
   document.querySelector(".modal h2").textContent =
@@ -702,9 +686,7 @@ function openModal() {
   document.getElementById("postDate").value =
     new Date().toISOString().slice(0, 10);
 
-document.querySelectorAll('input[name="platform"]').forEach(item => {
-  item.checked = false;
-});
+  document.getElementById("postPlatform").value = "Facebook";
   document.getElementById("postStatus").value = "draft";
 
   document.querySelector(".modal h2").textContent =
