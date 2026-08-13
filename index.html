@@ -591,6 +591,7 @@
 
     function openModal() {
       document.getElementById("postDate").value =
+        author_name: document.getElementById("postOwner").value.trim()
         new Date().toISOString().slice(0, 10);
 
       document.getElementById("modalOverlay").classList.add("show");
