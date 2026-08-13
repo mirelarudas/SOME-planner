@@ -604,13 +604,23 @@
     async function savePost(event) {
       event.preventDefault();
 
+      const selectedPlatforms = document.querySelectorAll(
+  'input[name="platform"]:checked'
+);
+
+if (selectedPlatforms.length === 0) {
+  alert("Selectează cel puțin un canal.");
+  return;
+}
       const post = {
         title: document.getElementById("postTitle").value.trim(),
         body: document.getElementById("postBody").value.trim(),
         scheduled_at: document.getElementById("postDate").value,
-        platform: document.getElementById("postPlatform").value,
+       platform: Array.from(
+  document.querySelectorAll('input[name="platform"]:checked')
+).map(item => item.value).join(", "),
         status: document.getElementById("postStatus").value,
-        author_name: "Echipă FieldView"
+        author_name: "FieldView"
       };
 
       try {
@@ -666,7 +676,13 @@ function editPost(post) {
   document.getElementById("postTitle").value = post.title || "";
   document.getElementById("postBody").value = post.body || "";
   document.getElementById("postDate").value = post.scheduled_at || "";
-  document.getElementById("postPlatform").value = post.platform || "Facebook";
+  const activePlatforms = (post.platform || "")
+  .split(",")
+  .map(item => item.trim());
+
+document.querySelectorAll('input[name="platform"]').forEach(item => {
+  item.checked = activePlatforms.includes(item.value);
+});
   document.getElementById("postStatus").value = post.status || "draft";
 
   document.querySelector(".modal h2").textContent =
@@ -686,7 +702,9 @@ function openModal() {
   document.getElementById("postDate").value =
     new Date().toISOString().slice(0, 10);
 
-  document.getElementById("postPlatform").value = "Facebook";
+document.querySelectorAll('input[name="platform"]').forEach(item => {
+  item.checked = false;
+});
   document.getElementById("postStatus").value = "draft";
 
   document.querySelector(".modal h2").textContent =
