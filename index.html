@@ -602,6 +602,14 @@
 
     async function savePost(event) {
       event.preventDefault();
+      const selectedPlatforms = document.querySelectorAll(
+  'input[name="platform"]:checked'
+);
+
+if (selectedPlatforms.length === 0) {
+  alert("Selectează cel puțin un canal.");
+  return;
+}
 
       const selectedPlatforms = document.querySelectorAll(
   'input[name="platform"]:checked'
@@ -717,6 +725,14 @@ document.querySelectorAll('input[name="platform"]').forEach(item => {
 
 async function savePost(event) {
   event.preventDefault();
+  const selectedPlatforms = document.querySelectorAll(
+  'input[name="platform"]:checked'
+);
+
+if (selectedPlatforms.length === 0) {
+  alert("Selectează cel puțin un canal.");
+  return;
+}
 
   const button = document.querySelector(".save");
   button.disabled = true;
@@ -726,7 +742,9 @@ async function savePost(event) {
     title: document.getElementById("postTitle").value.trim(),
     body: document.getElementById("postBody").value.trim(),
     scheduled_at: document.getElementById("postDate").value,
-    platform: document.getElementById("postPlatform").value,
+    platform: Array.from(
+  document.querySelectorAll('input[name="platform"]:checked')
+).map(item => item.value).join(", "),
     status: document.getElementById("postStatus").value,
     author_name: "Echipă FieldView"
   };
