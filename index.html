@@ -64,6 +64,17 @@
 .delete:hover {
   background: #e54843;
 }
+    .delete {
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px;
+  border: 0;
+  border-radius: 6px;
+  color: white;
+  background: #ff5b56;
+  font-weight: bold;
+  cursor: pointer;
+}
     @media (max-width:800px) { aside { display:none; } main { padding:0 13px 30px; } header { margin:0 -13px 20px; padding:0 13px; } .stats { grid-template-columns:repeat(2,1fr); } .week,.calendar { overflow-x:auto; } .week div,.day { min-width:90px; } .row { flex-direction:column; } }
   </style>
 </head>
@@ -134,6 +145,16 @@
       </div>
 
       <button class="save" type="submit">Salvează postarea</button>
+  
+      <button
+  id="deletePost"
+  class="delete"
+  type="button"
+  onclick="deletePost()"
+  style="display:none"
+>
+  Șterge postarea
+</button>
       <button
   id="deletePost"
   class="delete"
@@ -251,6 +272,7 @@
     }
 
     function closeModal() {
+     document.getElementById("deletePost").style.display = "none";
       document.getElementById("modalOverlay").classList.remove("show");
     }
 
@@ -264,6 +286,7 @@
       document.getElementById("postStatus").value = post.status || "draft";
       document.getElementById("authorName").value = post.author_name || "";
       setPlatforms(post.platform);
+      document.getElementById("deletePost").style.display = "block";
       document.getElementById("modalOverlay").classList.add("show");
     }
 
