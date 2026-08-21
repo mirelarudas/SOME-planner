@@ -49,6 +49,21 @@
     .platforms { display:grid; grid-template-columns:repeat(2,1fr); gap:7px; width:100%; margin:6px 0; padding:10px; border:1px solid #354257; border-radius:7px; background:#0d1117; }
     .platforms label { display:flex; align-items:center; gap:7px; color:#dbe3eb; font-size:13px; cursor:pointer; }
     .platforms input[type="checkbox"] { width:auto; margin:0; accent-color:var(--green); }
+    .delete {
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px;
+  border: 0;
+  border-radius: 6px;
+  color: white;
+  background: #ff5b56;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.delete:hover {
+  background: #e54843;
+}
     @media (max-width:800px) { aside { display:none; } main { padding:0 13px 30px; } header { margin:0 -13px 20px; padding:0 13px; } .stats { grid-template-columns:repeat(2,1fr); } .week,.calendar { overflow-x:auto; } .week div,.day { min-width:90px; } .row { flex-direction:column; } }
   </style>
 </head>
@@ -119,6 +134,15 @@
       </div>
 
       <button class="save" type="submit">Salvează postarea</button>
+      <button
+  id="deletePost"
+  class="delete"
+  type="button"
+  onclick="deletePost()"
+  style="display:none"
+>
+  Șterge postarea
+</button>
     </form>
   </div>
 
@@ -293,8 +317,47 @@
         button.textContent = defaultText;
       }
     }
+async function deletePost() {
+  if (!editingPost) return;
 
-    loadPosts();
+  const confirmed = confirm(
+    'Ștergi definitiv postarea „' + editingPost.title + '”?'
+  );
+
+  if (!confirmed) return;
+
+  const button = document.getElementById("deletePost");
+  button.disabled = true;
+  button.textContent = "Se șterge...";
+
+  try {
+    const response = await fetch(
+      SUPABASE_URL + "/rest/v1/posts?id=eq." +
+      encodeURIComponent(editingPost.id),
+      {
+        method: "DELETE",
+        headers: headers()
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(await response.text());
+    }
+
+    editingPost = null;
+    closeModal();
+    await loadPosts();
+  } catch (error) {
+    console.error(error);
+    alert("Postarea nu a putut fi ștearsă.");
+    } finally {
+    button.disabled = false;
+    button.textContent = "Șterge postarea";
+      }
+}
+  
+loadPosts();
+
   </script>
 </body>
 </html>
