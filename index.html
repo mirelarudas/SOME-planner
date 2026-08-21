@@ -146,24 +146,16 @@
 
       <button class="save" type="submit">Salvează postarea</button>
   
-      <button
+     <button
   id="deletePost"
   class="delete"
   type="button"
-  onclick="deletePost()"
+  onclick="removePost()"
   style="display:none"
 >
   Șterge postarea
 </button>
-      <button
-  id="deletePost"
-  class="delete"
-  type="button"
-  onclick="deletePost()"
-  style="display:none"
->
-  Șterge postarea
-</button>
+
     </form>
   </div>
 
@@ -340,7 +332,7 @@
         button.textContent = defaultText;
       }
     }
-async function deletePost() {
+async function removePost() {
   if (!editingPost) return;
 
   const confirmed = confirm(
